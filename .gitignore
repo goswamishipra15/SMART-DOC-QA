@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment Variables
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Build / Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Uploaded Docs / Vector DB
+data/uploads/
+data/faiss_index/
+data/bm25/
+
+# Database
+*.sqlite3
+
+# Cache
+.cache/
+
+# mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/

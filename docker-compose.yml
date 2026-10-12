@@ -1,0 +1,406 @@
+# services:
+#   postgres:
+#     image: postgres:16
+
+#     environment:
+#       POSTGRES_DB: docqa
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+
+#     ports:
+#       - "5432:5432"
+
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres -d docqa"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 10
+
+#   redis:
+#     image: redis:7
+
+#     ports:
+#       - "6379:6379"
+
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 10
+
+#   api:
+#     build: .
+
+#     working_dir: /app
+
+#     env_file:
+#       - .env
+
+#     environment:
+#       PYTHONPATH: /app
+#       OMP_NUM_THREADS: 1
+#       TOKENIZERS_PARALLELISM: false
+
+#     command: >
+#       bash -c "
+#       alembic upgrade head &&
+#       uvicorn app.main:app --host 0.0.0.0 --port 8000
+#       "
+
+#     ports:
+#       - "8000:8000"
+
+#     volumes:
+#       - .:/app
+#       - uploads_data:/app/data/uploads
+#       - faiss_data:/app/data/faiss_index
+#       - bm25_data:/app/data/bm25
+#       - huggingface_cache:/root/.cache/huggingface
+
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+
+#       redis:
+#         condition: service_healthy
+
+#   worker:
+#     build: .
+
+#     working_dir: /app
+
+#     env_file:
+#       - .env
+
+#     environment:
+#       PYTHONPATH: /app
+#       OMP_NUM_THREADS: 1
+#       TOKENIZERS_PARALLELISM: false
+
+#     command: >
+#       celery -A app.tasks.celery_app.celery_app worker
+#       --pool=solo
+#       --concurrency=1
+#       --loglevel=info
+
+#     volumes:
+#       - .:/app
+#       - uploads_data:/app/data/uploads
+#       - faiss_data:/app/data/faiss_index
+#       - bm25_data:/app/data/bm25
+#       - huggingface_cache:/root/.cache/huggingface
+
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+
+#       redis:
+#         condition: service_healthy
+
+#   flower:
+#     build: .
+
+#     working_dir: /app
+
+#     env_file:
+#       - .env
+
+#     environment:
+#       PYTHONPATH: /app
+
+#     command: >
+#       celery -A app.tasks.celery_app.celery_app flower --port=5555
+
+#     ports:
+#       - "5555:5555"
+
+#     depends_on:
+#       redis:
+#         condition: service_healthy
+
+# volumes:
+#   postgres_data:
+#   uploads_data:
+#   faiss_data:
+#   bm25_data:
+#   huggingface_cache:
+
+
+
+
+# services:
+#   postgres:
+#     image: postgres:16
+
+#     environment:
+#       POSTGRES_DB: docqa
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+
+#     ports:
+#       - "5432:5432"
+
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres -d docqa"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 10
+
+#   redis:
+#     image: redis:7
+
+#     ports:
+#       - "6379:6379"
+
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 10
+
+#   api:
+#     build: .
+
+#     working_dir: /app
+
+#     env_file:
+#       - .env
+
+#     environment:
+#       PYTHONPATH: /app
+#       OMP_NUM_THREADS: 1
+#       TOKENIZERS_PARALLELISM: false
+
+#       HF_HOME: /root/.cache/huggingface
+#       TRANSFORMERS_CACHE: /root/.cache/huggingface
+#       SENTENCE_TRANSFORMERS_HOME: /root/.cache/huggingface
+
+#       HF_HUB_OFFLINE: 1
+#       TRANSFORMERS_OFFLINE: 1
+
+#     command: >
+#       bash -c "
+#       alembic upgrade head &&
+#       uvicorn app.main:app --host 0.0.0.0 --port 8000
+#       "
+
+#     ports:
+#       - "8000:8000"
+
+#     volumes:
+#       - .:/app
+#       - uploads_data:/app/data/uploads
+#       - faiss_data:/app/data/faiss_index
+#       - bm25_data:/app/data/bm25
+#       - huggingface_cache:/root/.cache/huggingface
+
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+
+#       redis:
+#         condition: service_healthy
+
+#   worker:
+#     build: .
+
+#     working_dir: /app
+
+#     env_file:
+#       - .env
+
+#     environment:
+#       PYTHONPATH: /app
+#       OMP_NUM_THREADS: 1
+#       TOKENIZERS_PARALLELISM: false
+
+#       HF_HOME: /root/.cache/huggingface
+#       TRANSFORMERS_CACHE: /root/.cache/huggingface
+#       SENTENCE_TRANSFORMERS_HOME: /root/.cache/huggingface
+
+#       HF_HUB_OFFLINE: 1
+#       TRANSFORMERS_OFFLINE: 1
+
+#     command: >
+#       celery -A app.tasks.celery_app.celery_app worker
+#       --pool=solo
+#       --concurrency=1
+#       --loglevel=info
+
+#     volumes:
+#       - .:/app
+#       - uploads_data:/app/data/uploads
+#       - faiss_data:/app/data/faiss_index
+#       - bm25_data:/app/data/bm25
+#       - huggingface_cache:/root/.cache/huggingface
+
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+
+#       redis:
+#         condition: service_healthy
+
+#   flower:
+#     build: .
+
+#     working_dir: /app
+
+#     env_file:
+#       - .env
+
+#     environment:
+#       PYTHONPATH: /app
+
+#     command: >
+#       celery -A app.tasks.celery_app.celery_app flower --port=5555
+
+#     ports:
+#       - "5555:5555"
+
+#     depends_on:
+#       redis:
+#         condition: service_healthy
+
+# volumes:
+#   postgres_data:
+#   uploads_data:
+#   faiss_data:
+#   bm25_data:
+#   huggingface_cache:
+
+
+########
+
+
+x-app-base: &app-base
+  build: .
+
+  working_dir: /app
+
+  env_file:
+    - .env
+
+  environment:
+    PYTHONPATH: /app
+
+    OMP_NUM_THREADS: 1
+    TOKENIZERS_PARALLELISM: false
+
+    HF_HOME: /root/.cache/huggingface
+    TRANSFORMERS_CACHE: /root/.cache/huggingface
+    SENTENCE_TRANSFORMERS_HOME: /root/.cache/huggingface
+
+    HF_HUB_OFFLINE: 1
+    TRANSFORMERS_OFFLINE: 1
+
+  volumes:
+    - .:/app
+    - uploads_data:/app/data/uploads
+    - faiss_data:/app/data/faiss_index
+    - bm25_data:/app/data/bm25
+    - huggingface_cache:/root/.cache/huggingface
+
+
+services:
+
+  postgres:
+    image: postgres:16
+
+    environment:
+      POSTGRES_DB: docqa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d docqa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  redis:
+    image: redis:7
+
+    ports:
+      - "6379:6379"
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+
+  api:
+    <<: *app-base
+
+    command: >
+      bash -c "
+      alembic upgrade head &&
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      "
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy
+
+
+  worker:
+    <<: *app-base
+
+    command: >
+      celery -A app.tasks.celery_app.celery_app worker
+      --pool=solo
+      --concurrency=1
+      --loglevel=info
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy
+
+
+  flower:
+    <<: *app-base
+
+    command: >
+      celery -A app.tasks.celery_app.celery_app flower
+      --port=5555
+
+    ports:
+      - "5555:5555"
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+
+volumes:
+  postgres_data:
+  uploads_data:
+  faiss_data:
+  bm25_data:
+  huggingface_cache:
